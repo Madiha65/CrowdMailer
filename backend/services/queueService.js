@@ -6,6 +6,7 @@ const Campaign = require('../models/Campaign');
 const emailQueue = new Queue('email sending', process.env.REDIS_URL);
 
 emailQueue.process(async (job) => {
+  
   const { campaignId, subscriberId, to, subject, html } = job.data;
   
   try {
