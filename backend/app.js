@@ -17,7 +17,10 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://crowd-mailer.vercel.app"],
+  credentials: true,
+}));
 app.use(express.json());
 
 
