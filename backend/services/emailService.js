@@ -1,3 +1,4 @@
+// backend/services/emailService.js
 const nodemailer = require('nodemailer');
 const emailConfig = require('../config/emailConfig');
 
@@ -14,12 +15,13 @@ class EmailService {
     });
   }
 
-  async sendEmail(to, subject, html) {
+  async sendEmail(to, subject, html, attachments = []) {
     const mailOptions = {
       from: emailConfig.from,
       to,
       subject,
-      html
+      html,
+      attachments
     };
 
     return this.transporter.sendMail(mailOptions);

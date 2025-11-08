@@ -1,3 +1,4 @@
+//backend\models\EmailLog.js
 const mongoose = require('mongoose');
 
 const EmailLogSchema = new mongoose.Schema({

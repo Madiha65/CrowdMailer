@@ -1,4 +1,4 @@
- 
+ //backend\config\emailConfig.js
 module.exports = {
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
