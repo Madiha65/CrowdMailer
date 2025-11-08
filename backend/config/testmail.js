@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
-      secure: true, // use SSL
+      secure: true, 
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -16,7 +16,7 @@ const nodemailer = require("nodemailer");
 
     const info = await transporter.sendMail({
       from: process.env.FROM_EMAIL,
-      to: "yourtestemail@gmail.com", // replace with your own test email
+      to: "yourtestemail@gmail.com", 
       subject: "✅ Test Email from CrowdMailer",
       text: "If you see this, Gmail SMTP is working!",
     });
