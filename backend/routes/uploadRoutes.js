@@ -15,11 +15,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ Fix here: use "/" instead of "/uploads"
 router.post("/", upload.single("upload"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-  // const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
   const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
 
   res.json({ url: fileUrl, filename: req.file.filename });

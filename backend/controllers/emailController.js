@@ -26,23 +26,17 @@ exports.getStats = async (req, res) => {
   }
 };
 
-/**
- * 📧 Send a campaign email to all active subscribers
- * @route POST /api/campaigns/:id/send
- * @access Private
- */
+
 exports.sendCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
 
-    // Get active subscribers
     const subscribers = await Subscriber.find({ status: "active" });
     if (subscribers.length === 0) {
       return res.status(400).json({ message: "No active subscribers to send emails to" });
     }
 
-    // Extract image URLs from campaign.content
     const imageRegex = /<img[^>]+src="([^">]+)"/g;
     const attachments = [];
     let updatedHtml = campaign.content;
@@ -52,15 +46,12 @@ exports.sendCampaign = async (req, res) => {
     while ((match = imageRegex.exec(campaign.content)) !== null) {
       const imgUrl = match[1];
 
-      // Only process local URLs (e.g., localhost uploads)
       if (imgUrl.includes("uploads/")) {
         const localPath = path.join(__dirname, "..", imgUrl.replace("http://localhost:5000/", ""));
         const cid = `img${cidIndex}@campaign`;
 
-        // Replace URL with cid in HTML
         updatedHtml = updatedHtml.replace(new RegExp(imgUrl, "g"), `cid:${cid}`);
 
-        // Add attachment if file exists
         if (fs.existsSync(localPath)) {
           attachments.push({
             filename: path.basename(localPath),
@@ -75,7 +66,6 @@ exports.sendCampaign = async (req, res) => {
 
     console.log(`📸 Found ${attachments.length} inline images to embed.`);
 
-    // Send emails to all active subscribers
     for (const subscriber of subscribers) {
       await transporter.sendMail({
         from: `"${campaign.name}" <${process.env.EMAIL_USER}>`,
@@ -87,7 +77,6 @@ exports.sendCampaign = async (req, res) => {
       console.log(`✅ Sent to ${subscriber.email}`);
     }
 
-    // Update campaign status
     campaign.status = "sent";
     await campaign.save();
 

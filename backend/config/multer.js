@@ -7,7 +7,6 @@ const fs = require("fs");
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
-// Storage config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (file.mimetype.startsWith("image/")) cb(null, "uploads/images");

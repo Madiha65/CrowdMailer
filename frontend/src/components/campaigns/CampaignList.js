@@ -30,7 +30,7 @@ const CampaignList = () => {
     try {
       await api.post(`/campaigns/${id}/send`);
       alert('Campaign is being sent!');
-      // Refresh the list
+    
       const response = await api.get('/campaigns');
       setCampaigns(response.data);
     } catch (error) {
@@ -51,21 +51,20 @@ const CampaignList = () => {
 
   if (loading) return <div>Loading...</div>;
   const handleDelete = async (id) => {
-    console.log("🗑️ Attempting to delete campaign ID:", id); // ✅ Log the ID
+    console.log("🗑️ Attempting to delete campaign ID:", id);  
 
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
 
     try {
       const response = await api.delete(`/campaigns/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // ensure auth if required
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
         },
       });
 
-      console.log("✅ Delete response:", response.data); // ✅ Log server reply
+      console.log("✅ Delete response:", response.data); 
       alert("Campaign deleted successfully!");
 
-      // Refresh campaign list
       setCampaigns((prev) => prev.filter((c) => c._id !== id));
     } catch (error) {
       console.error("❌ Error deleting campaign:", error);

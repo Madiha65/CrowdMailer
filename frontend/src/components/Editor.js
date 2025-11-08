@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-// import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/en.js';
-// import '@ckeditor/ckeditor5-build-decoupled-document/build/styles.css';
 import '@ckeditor/ckeditor5-theme-lark/theme/theme.css';
 
 
@@ -16,7 +14,7 @@ function MyUploadAdapter(loader) {
       formData.append("upload", file);
 
       try {
-        const res = await fetch("http://localhost:5000/api/uploads",  {
+        const res = await fetch("http://localhost:5000/api/uploads", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -24,9 +22,8 @@ function MyUploadAdapter(loader) {
           body: formData,
         });
 
-        // ✅ Check if server responded OK
         if (!res.ok) {
-          const errorText = await res.text(); // read text if not JSON
+          const errorText = await res.text();
           console.error("Upload failed:", errorText);
           throw new Error(`Upload failed with status ${res.status}`);
         }
@@ -34,7 +31,6 @@ function MyUploadAdapter(loader) {
         const result = await res.json();
         console.log("Upload result:", result);
 
-        // ✅ Make sure backend sends result.url
         return { default: result.url };
       } catch (err) {
         console.error("Upload error:", err);
