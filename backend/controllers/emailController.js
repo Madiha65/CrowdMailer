@@ -66,17 +66,26 @@ exports.sendCampaign = async (req, res) => {
 
     console.log(`📸 Found ${attachments.length} inline images to embed.`);
 
-    for (const subscriber of subscribers) {
-      await transporter.sendMail({
-        from: `"${campaign.name}" <${process.env.EMAIL_USER}>`,
-        to: subscriber.email,
-        subject: campaign.subject,
-        html: updatedHtml,
-        attachments,
-      });
-      console.log(`✅ Sent to ${subscriber.email}`);
-    }
+   for (const subscriber of subscribers) {
+  try {
+    await transporter.sendMail({
+      from: `"${campaign.name}" <${process.env.FROM_EMAIL}>`,
+      to: subscriber.email,
+      subject: campaign.subject,
+      html: updatedHtml,
+      attachments,
+    });
+    console.log(`✅ Sent to: ${subscriber.email}`);
+  } catch (err) {
+    console.error(`❌ Failed to send to ${subscriber.email}:`, err.message);
+  }
 
+  // Wait 2 seconds between emails to avoid Gmail rate-limit
+  await new Promise((res) => setTimeout(res, 2000));
+}
+
+
+    // Update campaign status
     campaign.status = "sent";
     await campaign.save();
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { Form, Button, Container, InputGroup, Badge } from 'react-bootstrap';
+
 import Editor from '../../components/Editor';
 const CreateCampaign = () => {
   const [campaign, setCampaign] = useState({
@@ -12,12 +13,15 @@ const CreateCampaign = () => {
   });
   const [emailInput, setEmailInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate
+  const navigate = useNavigate();
+
+  // Update campaign inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCampaign(prev => ({ ...prev, [name]: value }));
   };
 
+  // Email handling
   const handleEmailChange = (e) => setEmailInput(e.target.value);
   const addRecipient = () => {
     const emails = emailInput
@@ -33,6 +37,7 @@ const CreateCampaign = () => {
     setCampaign(prev => ({ ...prev, recipients: prev.recipients.filter(e => e !== email) }));
   };
 
+  // Subscription fee
   const calculateFee = () => {
     const count = campaign.recipients.length;
     if (count <= 50) return 0;

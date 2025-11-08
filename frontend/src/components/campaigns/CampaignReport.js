@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../../services/api';
-import { Card, Row, Col, Table, Container } from 'react-bootstrap';
+import { Card, Row, Col, Container } from 'react-bootstrap';
 
 const CampaignReport = () => {
   const [campaign, setCampaign] = useState(null);
