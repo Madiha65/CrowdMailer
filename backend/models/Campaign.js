@@ -1,10 +1,11 @@
-//backend\models\Campaign.js
+// backend\models\Campaign.js
 const mongoose = require('mongoose');
 
 const CampaignSchema = new mongoose.Schema({
   name: { type: String, required: true },
   subject: { type: String, required: true },
   content: { type: String, required: true },
+  sender: { type: String, required: true }, // Add this field
   status: { type: String, enum: ['draft', 'sending', 'sent', 'paused'], default: 'draft' },
   createdAt: { type: Date, default: Date.now },
   sentAt: { type: Date },

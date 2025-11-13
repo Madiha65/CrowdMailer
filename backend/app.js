@@ -4,7 +4,7 @@ const path = require("path");
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');
-const subscriberRoutes = require('./routes/subscriberRoutes');
+const subscriberRoutes = require("./routes/subscriberRoutes");
 const emailRoutes = require('./routes/emailRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); 
 const errorHandler = require('./middleware/errorHandler');
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use('/api/auth', authRoutes);
-app.use('/api/subscribers', subscriberRoutes);
+app.use("/api", subscriberRoutes);
 app.use('/api', emailRoutes);
 app.use('/api/stats', statsRoutes);
 

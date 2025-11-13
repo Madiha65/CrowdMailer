@@ -1,4 +1,4 @@
- 
+ //C:\CrowdMailer\backend\controllers\subscriberController.js
 const Subscriber = require('../models/Subscriber');
 
 
@@ -6,17 +6,34 @@ exports.addSubscriber = async (req, res) => {
   try {
     const { name, email } = req.body;
 
-    const subscriberExists = await Subscriber.findOne({ email });
-    if (subscriberExists) {
-      return res.status(400).json({ message: 'Subscriber already exists' });
+    // 1️⃣ Validate input
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
     }
 
-    const subscriber = await Subscriber.create({ name, email });
-    res.status(201).json(subscriber);
+    // 2️⃣ Check if already exists
+    const existing = await Subscriber.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "Already subscribed!" });
+    }
+
+    // 3️⃣ Create new subscriber with active status
+    const subscriber = await Subscriber.create({
+      name: name || "Anonymous",
+      email,
+      status: "active",
+    });
+
+    res.status(201).json({
+      message: "✅ Subscribed successfully!",
+      subscriber,
+    });
   } catch (error) {
+    console.error("❌ Subscription Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 exports.getSubscribers = async (req, res) => {
   try {

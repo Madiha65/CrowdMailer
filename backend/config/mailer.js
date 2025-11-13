@@ -1,20 +1,26 @@
-//backend\config\mailer.js
+// backend/config/mailer.js
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + "/../.env" });
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, 
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT) || 587,
+  secure: process.env.SMTP_SECURE === "true", 
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false, 
+  },
 });
 
 transporter.verify((error, success) => {
-  if (error) console.error("❌ Mailer connection error:", error);
-  else console.log("✅ Mailer ready to send emails");
+  if (error) {
+    console.error("❌ Mailer connection error:", error);
+  } else {
+    console.log("✅ Mailer ready to send emails");
+  }
 });
 
 module.exports = transporter;
