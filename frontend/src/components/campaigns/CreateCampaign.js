@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { Form, Button, Container, InputGroup, Badge, Alert, Card } from 'react-bootstrap';
+import { Form, Button, Container, Alert} from 'react-bootstrap';
 import Editor from '../../components/Editor';
 
 const CreateCampaign = () => {
