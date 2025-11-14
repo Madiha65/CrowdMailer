@@ -2,7 +2,7 @@
 const Campaign = require('../models/Campaign');
 const Subscriber = require('../models/Subscriber');
 const emailQueue = require('../services/queueService');
-const upload = require('../config/multer');
+const upload = require('../config/multer'); 
 const getFileUrls = (files) => {
   if (!files) return [];
   return files.map(file => `http://localhost:5000/${file.path.replace(/\\/g, '/')}`);
@@ -17,7 +17,7 @@ exports.uploadCampaignFiles = upload.fields([
 exports.createCampaign = async (req, res) => {
   try {
     const recipients = req.body.recipients ? JSON.parse(req.body.recipients) : [];
-    const sender = req.body.sender;
+    const sender = req.body.sender; 
     if (!sender) {
       return res.status(400).json({ error: "Sender email is required" });
     }
@@ -41,7 +41,7 @@ exports.createCampaign = async (req, res) => {
       sender,
       recipients,
       subscriptionFee: req.body.subscriptionFee,
-      images: [],
+      images: [], 
       videos: [],
       pdfs: [],
       status: "draft",
@@ -72,7 +72,7 @@ exports.sendCampaign = async (req, res) => {
     console.log("📤 Sending campaign:", campaign.name);
 
     let recipientEmails = campaign.recipients;
-
+    
     if (req.body.recipients && Array.isArray(req.body.recipients)) {
       recipientEmails = req.body.recipients;
     }
@@ -185,7 +185,7 @@ exports.sendCampaign = async (req, res) => {
       console.log("Sending to:", email);
       await transporter.sendMail({
         from: `"${campaign.name}" <${process.env.EMAIL_USER}>`,
-        to: subscribers.email,
+        to:subscribers.email,
         subject: campaign.subject,
         html: campaign.content,
       });
