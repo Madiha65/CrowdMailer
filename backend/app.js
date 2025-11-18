@@ -9,7 +9,11 @@ const emailRoutes = require('./routes/emailRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); 
 const errorHandler = require('./middleware/errorHandler');
 
-require('dotenv').config();
+
+require("dotenv").config({
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env.local"
+});
+
 
 const statsRoutes = require("./routes/statsRoutes");
 

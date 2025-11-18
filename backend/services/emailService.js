@@ -31,42 +31,32 @@
 // module.exports = new EmailService();
 
 
-const nodemailer = require('nodemailer');
-// Instead of requiring a separate config file, use environment variables directly
-// or ensure your emailConfig.js is properly configured
+// backend/services/emailService.js
+const sgMail = require('@sendgrid/mail');
+
+// Set the API key from the environment variable provided by the Render add-on
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class EmailService {
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT),
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      },
-      // Add timeout options
-      connectionTimeout: 60000,
-      greetingTimeout: 30000,
-      socketTimeout: 60000
-    });
-  }
-
   async sendEmail(to, subject, html, attachments = []) {
-    const mailOptions = {
-      from: process.env.FROM_EMAIL,
-      to,
-      subject,
-      html,
-      attachments
+    const msg = {
+      to: to, // Recipient's email address
+      from: process.env.FROM_EMAIL, // Must be a verified sender in your SendGrid account
+      subject: subject,
+      html: html,
+      attachments: attachments,
     };
 
     try {
-      const result = await this.transporter.sendMail(mailOptions);
-      console.log('Email sent successfully:', result.messageId);
-      return result;
+      await sgMail.send(msg);
+      console.log('✅ Email sent successfully via SendGrid');
+      return { success: true, message: 'Email sent successfully' };
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('❌ Error sending email with SendGrid:', error);
+      // Log detailed error information from SendGrid if available
+      if (error.response) {
+        console.error(error.response.body);
+      }
       throw error;
     }
   }
