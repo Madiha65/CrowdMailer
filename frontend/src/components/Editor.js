@@ -5,7 +5,7 @@ import '@ckeditor/ckeditor5-theme-lark/theme/theme.css';
 
 
 import "../App.css"
-
+const API_URL = process.env.REACT_APP_API_URL;
 function MyUploadAdapter(loader) {
   return {
     upload: async () => {
@@ -14,7 +14,8 @@ function MyUploadAdapter(loader) {
       formData.append("upload", file);
 
       try {
-        const res = await fetch("http://localhost:5000/api/uploads", {
+        const res = await fetch(`${API_URL}/uploads`, {
+          
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
