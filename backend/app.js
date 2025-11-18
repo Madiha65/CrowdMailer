@@ -11,9 +11,14 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 
-require("dotenv").config({
-  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env.local"
-});
+// Only load from .env files when NOT in production
+if (process.env.NODE_ENV !== 'production') {
+  require("dotenv").config({
+    path: ".env.local"
+  });
+}
+
+
 
 
 const statsRoutes = require("./routes/statsRoutes");
