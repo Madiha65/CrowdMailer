@@ -1,22 +1,22 @@
-
 {
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-     
-  },
+  "dev": "dotenv -e .env.local -- nodemon server.js",
+  "start": "dotenv -e .env.production -- node server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "bcryptjs": "^3.0.2",
     "bull": "^4.16.5",
     "bullmq": "^5.61.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "dotenv-cli": "^11.0.0",
     "express": "^5.1.0",
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
@@ -25,8 +25,8 @@
     "nodemailer": "^7.0.10"
   },
   "engines": {
-  "node": "22.x"
-},
+    "node": "22.x"
+  },
   "description": "",
   "devDependencies": {
     "nodemon": "^3.1.10"

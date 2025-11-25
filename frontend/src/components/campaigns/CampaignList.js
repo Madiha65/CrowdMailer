@@ -6,7 +6,6 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { GrFormViewHide } from "react-icons/gr";
 import { MdSendToMobile } from "react-icons/md";
 
-
 const CampaignList = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +28,6 @@ const CampaignList = () => {
 const handleSend = async (id) => {
   try {
     const campaign = campaigns.find(c => c._id === id);
-
     const payload = {
     from: localStorage.getItem("userEmail"), 
       emails: [
@@ -50,7 +48,10 @@ const handleSend = async (id) => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   }
 );
+
+
     alert("✅ Campaign is being sent!");
+
     const response = await api.get("/campaigns");
     setCampaigns(response.data);
   } catch (error) {

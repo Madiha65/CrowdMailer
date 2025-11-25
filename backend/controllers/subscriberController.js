@@ -6,15 +6,18 @@ exports.addSubscriber = async (req, res) => {
   try {
     const { name, email } = req.body;
 
+    // 1️⃣ Validate input
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
 
+    // 2️⃣ Check if already exists
     const existing = await Subscriber.findOne({ email });
     if (existing) {
       return res.status(400).json({ message: "Already subscribed!" });
     }
 
+    // 3️⃣ Create new subscriber with active status
     const subscriber = await Subscriber.create({
       name: name || "Anonymous",
       email,
