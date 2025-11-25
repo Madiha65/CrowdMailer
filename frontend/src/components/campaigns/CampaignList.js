@@ -26,18 +26,39 @@ const CampaignList = () => {
     fetchCampaigns();
   }, []);
 
-  const handleSend = async (id) => {
-    try {
-      await api.post(`/campaigns/${id}/send`);
-      alert('Campaign is being sent!');
-    
-      const response = await api.get('/campaigns');
-      setCampaigns(response.data);
-    } catch (error) {
-      console.error('Error sending campaign:', error);
-      alert('Failed to send campaign');
-    }
-  };
+const handleSend = async (id) => {
+  try {
+    const campaign = campaigns.find(c => c._id === id);
+
+    const payload = {
+    from: localStorage.getItem("userEmail"), 
+      emails: [
+        "user1@gmail.com",
+        "user2@gmail.com",
+        "user3@gmail.com"
+      ],
+      subject: campaign?.subject || "Default Subject",
+      html: campaign?.content || "<p>No content</p>"
+    };
+
+    console.log("🚀 Sending campaign:", payload);
+
+  await api.post(
+  `/campaigns/${id}/send`,
+  { recipients: campaign.recipients }, 
+  {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  }
+);
+    alert("✅ Campaign is being sent!");
+    const response = await api.get("/campaigns");
+    setCampaigns(response.data);
+  } catch (error) {
+    console.error("❌ Error sending campaign:", error.response?.data || error);
+    alert("Failed to send campaign");
+  }
+};
+
 
   const getStatusBadge = (status) => {
     switch (status) {

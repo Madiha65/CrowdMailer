@@ -8,3 +8,4 @@ router.get('/', auth, subscriberController.getSubscribers);
 router.delete('/:id', auth, subscriberController.deleteSubscriber);
 
 module.exports = router;
+

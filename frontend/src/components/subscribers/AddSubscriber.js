@@ -21,7 +21,7 @@ const AddSubscriber = () => {
     setLoading(true);
     
     try {
-      await api.post('/subscribers', subscriber);
+     await api.post('/subscribers', subscriber);
       navigate('/subscribers');
     } catch (error) {
       console.error('Error adding subscriber:', error);

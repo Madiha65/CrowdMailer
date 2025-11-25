@@ -76,7 +76,7 @@ exports.sendCampaign = async (req, res) => {
       console.log("Sending to:", email);
       await transporter.sendMail({
         from: `"${campaign.name}" <${process.env.EMAIL_USER}>`,
-        to: email,
+        to:subscribers.email,
         subject: campaign.subject,
         html: campaign.content,
       });
