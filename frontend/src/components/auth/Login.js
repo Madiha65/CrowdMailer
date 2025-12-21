@@ -1,5 +1,6 @@
+//frontend\src\components\auth\Login.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 
@@ -7,16 +8,30 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 🔑 read query params
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get('redirect');
+  const plan = params.get('plan');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     try {
       await login(email, password);
-      navigate('/');
+
+      // ✅ redirect logic
+      if (redirect) {
+        navigate(`${redirect}?plan=${plan}`);
+      } else {
+        navigate('/');
+      }
+
     } catch (err) {
       setError('Invalid email or password');
     }
@@ -38,6 +53,7 @@ const Login = () => {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -47,12 +63,14 @@ const Login = () => {
                 required
               />
             </Form.Group>
+
             <Button variant="primary" type="submit" className="w-100">
               Login
             </Button>
           </Form>
+
           <div className="text-center mt-3">
-            Don't have an account? <a href="/register">Register</a>
+            Don't have an account? <a href={`/register?redirect=${redirect}&plan=${plan}`}>Register</a>
           </div>
         </Card.Body>
       </Card>

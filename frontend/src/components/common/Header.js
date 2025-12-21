@@ -1,37 +1,55 @@
-import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-
+import React, { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import "../../App.css";
+import { useNavigate } from "react-router-dom";
 const Header = () => {
   const { user, logout } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+ const navigate = useNavigate();
+  
 
   return (
-    <Navbar bg="primary" variant="dark" expand="lg">
-      <Container>
-        <Navbar.Brand href="/">
-          <i className="fas fa-envelope-open-text me-2"></i>
-          Email Marketing System
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            {user ? (
-              <>
-                <Nav.Link href="/">Dashboard</Nav.Link>
-                <Nav.Link href="/campaigns">Campaigns</Nav.Link>
-                <Nav.Link href="/subscribers">Subscribers</Nav.Link>
-                <Nav.Link onClick={logout}>Logout</Nav.Link>
-              </>
-            ) : (
-              <>
-                <Nav.Link href="/login">Login</Nav.Link>
-                <Nav.Link href="/register">Register</Nav.Link>
-              </>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+  <nav className="sticky-nav">
+      <div className="logo" onClick={() => navigate("/")}>CrowdMailer</div>
+
+      <ul className={isMobileMenuOpen ? "nav-links mobile-open" : "nav-links"}>
+        <li><button onClick={() => { navigate("/"); closeMobileMenu(); }} className="nav-link-btn">Home</button></li>
+        <li><button onClick={() => { navigate("/about"); closeMobileMenu(); }} className="nav-link-btn">About</button></li>
+        <li><button onClick={() => { navigate("/features"); closeMobileMenu(); }} className="nav-link-btn">Features</button></li>
+
+        {/* ✅ PRICING PAGE */}
+        <li>
+          <button onClick={() => { navigate("/pricing"); closeMobileMenu(); }} className="nav-link-btn">
+            Pricing
+          </button>
+        </li>
+
+        <li><button onClick={() => { navigate("/contact"); closeMobileMenu(); }} className="nav-link-btn">Contact</button></li>
+
+        {user && (
+          <li><button onClick={() => { navigate("/dashboard"); closeMobileMenu(); }} className="nav-link-btn">Dashboard</button></li>
+        )}
+
+        <li className="nav-btn">
+          {user ? (
+            <button className="logout-btn" onClick={logout}>Logout</button>
+          ) : (
+            <>
+              <button onClick={() => navigate("/login")} className="nav-link-btn">Login</button>
+              <button onClick={() => navigate("/register")} className="nav-link-btn">Get Started</button>
+            </>
+          )}
+        </li>
+      </ul>
+    </nav>
   );
 };
 

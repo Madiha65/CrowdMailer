@@ -17,7 +17,7 @@
 
 //   async sendEmail(to, subject, html, attachments = []) {
 //     const mailOptions = {
-//       from: emailConfig.from,
+//       from: emailConfig.from,class
 //       to,
 //       subject,
 //       html,

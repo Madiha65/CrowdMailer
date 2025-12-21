@@ -27,7 +27,7 @@ const Sidebar = () => {
 
       <Nav className="flex-column sidebar-content">
         <Nav.Item>
-          <Nav.Link href="/" className="d-flex align-items-center mb-3">
+          <Nav.Link href="/dashboard" className="d-flex align-items-center mb-3">
             <MdDashboardCustomize size={22} className="me-2 text-primary" />
             {isOpen && <span>Dashboard</span>}
           </Nav.Link>
@@ -48,13 +48,13 @@ const Sidebar = () => {
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link href="/" className="d-flex align-items-center mb-3">
+          <Nav.Link href="#Users" className="d-flex align-items-center mb-3">
             <FaUser size={22} className="me-2" style={{ color: '#0dcaf0' }}/>
             {isOpen && <span>Users</span>}
           </Nav.Link>
         </Nav.Item>
          <Nav.Item>
-          <Nav.Link href="/" className="d-flex align-items-center mb-3">
+          <Nav.Link href="#" className="d-flex align-items-center mb-3">
             <FaEnvelopeOpen size={22} className="me-2 text-warning" />
             {isOpen && <span>Open Rate</span>}
           </Nav.Link>

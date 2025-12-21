@@ -1,5 +1,6 @@
+//frontend\src\components\auth\Register.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 
@@ -9,20 +10,33 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get('redirect');
+  const plan = params.get('plan');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (password !== confirmPassword) {
       return setError('Passwords do not match');
     }
-    
+
     try {
       await register({ name, email, password });
-      navigate('/');
+
+      // ✅ redirect after register
+      if (redirect) {
+        navigate(`${redirect}?plan=${plan}`);
+      } else {
+        navigate('/');
+      }
+
     } catch (err) {
       setError('Failed to create an account');
     }
@@ -30,10 +44,11 @@ const Register = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
-      <Card style={{ width: '400px' }}>
+      <Card style={{ width: '400px', margin: '2rem' }}>
         <Card.Body>
           <h2 className="text-center mb-4">Register</h2>
           {error && <Alert variant="danger">{error}</Alert>}
+
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
@@ -44,6 +59,7 @@ const Register = () => {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
               <Form.Control
@@ -53,6 +69,7 @@ const Register = () => {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -62,6 +79,7 @@ const Register = () => {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
@@ -71,12 +89,14 @@ const Register = () => {
                 required
               />
             </Form.Group>
+
             <Button variant="primary" type="submit" className="w-100">
               Register
             </Button>
           </Form>
+
           <div className="text-center mt-3">
-            Already have an account? <a href="/login">Login</a>
+            Already have an account? <a href={`/login?redirect=${redirect}&plan=${plan}`}>Login</a>
           </div>
         </Card.Body>
       </Card>
