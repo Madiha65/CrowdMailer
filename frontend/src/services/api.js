@@ -32,15 +32,18 @@
 import axios from 'axios';
 
 // REMOVE /api from the end of this URL
-const API_URL = process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com';
-
+const API_URL =
+  process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true
 });
+
+
 
 // These interceptors are perfectly correct, no changes needed here.
 api.interceptors.request.use(config => {

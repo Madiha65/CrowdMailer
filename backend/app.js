@@ -1,3 +1,4 @@
+//backend\app.js
 const express = require('express');
 const cors = require('cors');
 const path = require("path");
@@ -18,9 +19,16 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://crowd-mailer.vercel.app"],
+  origin: [
+    "http://localhost:3000",
+    "https://crowd-mailer-eight.vercel.app"
+  ],
   credentials: true,
 }));
+
+app.options("*", cors());
+
+
 app.use(express.json());
 
 
