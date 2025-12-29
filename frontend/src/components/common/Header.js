@@ -1,41 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "../../App.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { RxDropdownMenu } from "react-icons/rx";
+import { MdOutlineMenu } from "react-icons/md";
+
 const Header = () => {
-  const { user, logout } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+ 
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+ const { user, logout } = useAuth();
+const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const navigate = useNavigate();
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
- const navigate = useNavigate();
-  
+const toggleMobileMenu = () => {
+  setIsMobileMenuOpen(prev => !prev);
+};
+
+const closeMobileMenu = () => {
+  setIsMobileMenuOpen(false);
+};
+
+useEffect(() => {
+  const close = () => setIsMobileMenuOpen(false);
+  window.addEventListener("resize", close);
+  return () => window.removeEventListener("resize", close);
+}, []);
+
+
 
   return (
-  <nav className="sticky-nav">
-      <div className="logo" onClick={() => navigate("/")}>CrowdMailer</div>
+    <nav className="sticky-nav">
+      <div className="logo" onClick={() => navigate("/")}>
+        CrowdMailer
+      </div>
 
-      <ul className={isMobileMenuOpen ? "nav-links mobile-open" : "nav-links"}>
-        <li><button onClick={() => { navigate("/"); closeMobileMenu(); }} className="nav-link-btn">Home</button></li>
-        <li><button onClick={() => { navigate("/about"); closeMobileMenu(); }} className="nav-link-btn">About</button></li>
-        <li><button onClick={() => { navigate("/features"); closeMobileMenu(); }} className="nav-link-btn">Features</button></li>
+     <div className="hamburger" onClick={toggleMobileMenu}>
+  {isMobileMenuOpen ? (
+    <MdOutlineMenu size={30} />
+  ) : (
+    <RxDropdownMenu size={30} />
+  )}
+</div>
 
-        {/* ✅ PRICING PAGE */}
-        <li>
-          <button onClick={() => { navigate("/pricing"); closeMobileMenu(); }} className="nav-link-btn">
-            Pricing
-          </button>
-        </li>
-
-        <li><button onClick={() => { navigate("/contact"); closeMobileMenu(); }} className="nav-link-btn">Contact</button></li>
+      <ul className={`nav-links ${isMobileMenuOpen ? "mobile-open" : ""}`}>
+        <li><Link to="/" onClick={() => { closeMobileMenu(); }}>Home</Link></li>
+        <li><Link to="/about" onClick={() => { closeMobileMenu(); }}>About</Link></li>
+        <li><Link to="/features" onClick={() => { closeMobileMenu(); }}>Features</Link></li>
+        <li><Link to="/pricing" onClick={() => { closeMobileMenu(); }}>Pricing</Link></li>
+        <li><Link to="/contact" onClick={() => { closeMobileMenu(); }}>Contact</Link></li>
 
         {user && (
-          <li><button onClick={() => { navigate("/dashboard"); closeMobileMenu(); }} className="nav-link-btn">Dashboard</button></li>
+          <li><Link to="/dashboard" onClick={() => { closeMobileMenu(); }}>Dashboard</Link></li>
         )}
 
         <li className="nav-btn">
@@ -43,8 +58,12 @@ const Header = () => {
             <button className="logout-btn" onClick={logout}>Logout</button>
           ) : (
             <>
-              <button onClick={() => navigate("/login")} className="nav-link-btn">Login</button>
-              <button onClick={() => navigate("/register")} className="nav-link-btn">Get Started</button>
+              <button className="login-btn" onClick={() => navigate("/login")}>
+                Login
+              </button>
+              <button className="reg-btn" onClick={() => navigate("/register")}>
+                Get Started
+              </button>
             </>
           )}
         </li>

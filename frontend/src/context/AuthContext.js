@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { login, register, logout } from '../services/authService';
-
+import { toast } from 'react-toastify';
 const AuthContext = createContext();
+
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -28,21 +29,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleRegister = async (userData) => {
-    try {
-      const data = await register(userData);
-      localStorage.setItem('token', data.token);
-      setUser({ token: data.token, ...data.user });
-      return data;
-    } catch (error) {
-      throw error;
-    }
+const handleRegister = async (userData) => {
+  const data = await register(userData);
+  return data;
+};
+
+ const handleLogout = () => {
+    logout();
+    localStorage.removeItem('token');
+    setUser(null);
+
+    toast.success('Logged out successfully 👋');
   };
 
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-  };
 
   const value = {
     user,

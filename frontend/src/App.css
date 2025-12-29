@@ -4,10 +4,6 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-/* .App {
-  text-align: center;
-} */
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -61,7 +57,7 @@
   transition: all 0.3s ease;
 }
 
-/* Adjust content width based on sidebar */
+
 .sidebar-container.open+.content {
   width: 80%;
 }
@@ -109,6 +105,17 @@
   padding: 10px 15px;
 }
 
+.sidebar-header .hamburger {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+  padding: 0;
+  color: #333;
+}
+.sidebar-container.closed .hamburger {
+  text-align: center;
+}
 .toggle-icon {
   cursor: pointer;
   color: #333;
@@ -144,74 +151,84 @@
   align-items: center;
   justify-content: space-between;
   background: #2563eb;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   position: sticky;
-  z-index: 100;
   top: 0;
-  padding: 0 8%;
+  z-index: 100;
+  padding: 0 5%;
+  box-sizing: border-box;
 }
+
 
 .logo {
   font-size: 26px;
   font-weight: 700;
-  font-weight: bold;
-  margin-left: 2rem;
+  color: black;
+  cursor: pointer;
+  margin: 0;
+  line-height: 1;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 25px;
   align-items: center;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links li {
-  display: inline-block;
+
+
+.nav-links li a {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: black;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0.5;
+}
+
+.nav-links li a:hover {
+  opacity: 1;
+
 }
 
 .nav-links .login-btn,
 .nav-links .reg-btn,
 .nav-links .logout-btn {
-  padding: 8px 18px;
-  border-radius: 6px;
-  background: #027cff;
-  color: white;
-  margin-left: 10px;
-}
-
-
-.nav-links li a,
-.nav-links li button {
-  text-decoration: none;
-  color: #333;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 15px;
   font-weight: 500;
-  background: none;
-  border: none;
   cursor: pointer;
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 0.1rem;
-  opacity: 0.7;
-
-}
-
-.nav-links li a:hover,
-.nav-links li button:hover {
-  opacity: 2;
-}
-
-.nav-links .logout-btn {
+  line-height: 1;
+  text-decoration: none;
+  background: #1d4ed8;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  color: white;
   border: none;
 }
 
-.nav-buttons .login-btn:hover,
-.nav-buttons .reg-btn:hover,
-.nav-buttons .logout-btn:hover {
+.nav-links .login-btn:hover,
+.nav-links .reg-btn:hover,
+.nav-links .logout-btn:hover {
   background: #0257b1;
+  color: rgb(184, 176, 176);
+
 }
 
 .nav-links .nav-btn {
-  margin-left: 10rem;
+  display: flex;
+  gap: 12px;
 
 }
 
@@ -221,25 +238,8 @@
   cursor: pointer;
   gap: 5px;
   margin-right: 2rem;
-}
+  color: #fff;
 
-.bar {
-  width: 25px;
-  height: 3px;
-  background-color: #fff;
-  transition: all 0.3s ease;
-}
-
-.bar.open:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.bar.open:nth-child(2) {
-  opacity: 0;
-}
-
-.bar.open:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 .page-content {
@@ -652,7 +652,6 @@
   background: #e0e7ff;
 }
 
-/* CSS */
 footer {
   background-color: #0822ee;
   color: #fff;
@@ -757,11 +756,10 @@ footer {
   width: 850px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
-/* LEFT PANEL */
 .payment-left {
   width: 40%;
   background: linear-gradient(135deg, #2563eb, #1e40af);
@@ -774,7 +772,7 @@ footer {
 }
 
 .amount-box {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   padding: 15px;
   border-radius: 8px;
   font-size: 26px;
@@ -798,7 +796,6 @@ footer {
   font-size: 14px;
 }
 
-/* RIGHT PANEL */
 .payment-right {
   width: 60%;
   padding: 30px;
@@ -838,22 +835,26 @@ footer {
 .payment-right button:hover {
   background: #1e40af;
 }
-@media (max-width: 1200px) and (min-width:343px) {
+
+@media (max-width: 1000px) {
   .nav-links {
     display: none;
     flex-direction: column;
     position: fixed;
-    top: 60px;
+    top: 70px;
     right: 20px;
     width: 280px;
     background: #2563eb;
     padding: 1rem;
-    border-radius: 10px;
     z-index: 999;
+    gap: 2px;
   }
 
   .nav-links.mobile-open {
     display: flex;
+  }
+.hamburger {
+    display: block;
   }
 
   .nav-links li {
@@ -864,17 +865,22 @@ footer {
   .nav-links .nav-btn {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 1rem;
+
+    margin-top: auto;
     align-items: center;
+    padding-top: 20px;
   }
 
   .nav-links .login-btn,
   .nav-links .reg-btn,
   .nav-links .logout-btn {
-    width: 90%;
     margin: 0;
     background: #1d4ed8;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-size: 16px;
+    justify-content: center;
   }
 
   .nav-links li a,
@@ -888,14 +894,12 @@ footer {
     display: none;
   }
 
-  .nav-links .logout-btn {
-    border: none;
-  }
 
   .nav-buttons .login-btn:hover,
   .nav-buttons .reg-btn:hover,
   .nav-buttons .logout-btn:hover {
     background: #0257b1;
+
   }
 
   .nav-links .nav-btn {
@@ -919,38 +923,55 @@ footer {
     transition: width 0.3s ease-in-out;
   }
 
-  .content {
-    width: 100%;
-    padding: 20px;
-  }
-
   .main-container {
     flex-direction: column;
   }
 
   .sidebar-container {
     position: fixed;
-    top: 0;
+    top: 70px;
     left: 0;
     width: 0;
+    height: calc(100vh - 70px);
     z-index: 1000;
-    height: 100vh;
-    overflow: hidden;
+    overflow: scroll;
     background-color: #fff;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease;
   }
 
   .sidebar-container.open {
-    width: 70%;
+    width: 30%;
   }
 
   .sidebar-container.closed {
-    width: 0;
+    width: 60px;
   }
 
   .sidebar-header {
     justify-content: flex-start;
     padding: 15px;
+  }
+
+  .sidebar-container.closed {
+    width: 60px;
+  }
+
+  .sidebar-content {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
   }
 
   .footer-container {
@@ -965,7 +986,8 @@ footer {
   .social-icons {
     margin-top: 10px;
   }
-   .payment-card {
+
+  .payment-card {
     flex-direction: column;
     width: 95%;
   }

@@ -29,9 +29,10 @@
 // );
 
 // export default api;
+
+//frontend\src\services\api.js
 import axios from 'axios';
 
-// REMOVE /api from the end of this URL
 const API_URL =
   process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com/api';
 
@@ -42,10 +43,6 @@ const api = axios.create({
   },
   withCredentials: true
 });
-
-
-
-// These interceptors are perfectly correct, no changes needed here.
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {

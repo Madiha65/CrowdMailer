@@ -16,9 +16,6 @@ const BankDetails = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // API call / payment gateway logic here
-
     navigate(`/dashboard/subscribe?plan=${plan}`);
   };
 
@@ -26,7 +23,6 @@ const BankDetails = () => {
     <div className="payment-wrapper">
       <div className="payment-card">
 
-        {/* LEFT SIDE */}
         <div className="payment-left">
           <h3>CrowdMailer</h3>
 
@@ -50,7 +46,6 @@ const BankDetails = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
         <div className="payment-right">
           <h3>Payment Details</h3>
 

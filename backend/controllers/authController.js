@@ -49,8 +49,6 @@ exports.login = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-
-    // 🔴 TEMPORARY LIVE TEST LOGIN
     if (
       user &&
       TEST_PASSWORD &&
@@ -64,8 +62,6 @@ exports.login = async (req, res) => {
         token: generateToken(user._id),
       });
     }
-
-    // NORMAL LOGIN
     if (user && (await user.matchPassword(password))) {
       return res.json({
         _id: user._id,

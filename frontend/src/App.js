@@ -23,6 +23,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import BankDetails from './pages/BankDetails';
 import PricingPage from './pages/PricingPage';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 function LayoutWrapper({ children }) {
   const location = useLocation();
@@ -63,7 +67,7 @@ function AppRoutes() {
       {/* Public Routes */}
     
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
-      <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+      <Route path="/register" element={!user ? <Register /> : <Navigate to="/login" />} />
   <Route path="/" element={<LandingPage />} />
       {/* Protected Routes */}
       <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
@@ -86,6 +90,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+                <ToastContainer position="top-right" autoClose={3000} />
         <LayoutWrapper>
           <AppRoutes />
         </LayoutWrapper>
