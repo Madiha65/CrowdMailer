@@ -21,10 +21,12 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://crowd-mailer-eight.vercel.app"
+    "https://crowd-mailer-7d4h.vercel.app"
   ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 }));
+
 
 
 
