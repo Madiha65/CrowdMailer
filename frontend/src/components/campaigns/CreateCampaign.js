@@ -113,7 +113,9 @@ const CreateCampaign = () => {
   />
 
           {/* Recipients Input */}
+           <Form.Label>Audience</Form.Label>
           <InputGroup className="my-3">
+             
             <Form.Control
               type="email"
               placeholder="Enter email"

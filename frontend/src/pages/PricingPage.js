@@ -26,7 +26,7 @@ const PricingPage = () => {
         <li>✔ Email support</li>
       </ul>
       <button className="outline-btn" onClick={() => handlePlanClick("free")}>
-        Get Started
+        Get Free Trial
       </button>
     </div>
 
@@ -40,7 +40,7 @@ const PricingPage = () => {
         <li>✔ Standard support</li>
       </ul>
       <button onClick={() => handlePlanClick("starter")}>
-        Start Free Trial
+      Get Starter Plan
       </button>
     </div>
 
@@ -54,7 +54,7 @@ const PricingPage = () => {
         <li>✔ Priority support</li>
       </ul>
       <button onClick={() => handlePlanClick("pro")}>
-        Get Pro
+        Get Pro Plan
       </button>
     </div>
 
