@@ -34,7 +34,7 @@
 import axios from 'axios';
 
 const API_URL =
-  process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com/api';
+  process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
