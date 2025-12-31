@@ -20,15 +20,13 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    // Remove deprecated options and ensure you're using the Atlas connection string
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB Connected');
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(error.message);
-    // Don't exit immediately, try to reconnect
-    console.log('Retrying connection in 5 seconds...');
-    setTimeout(connectDB, 5000);
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1); // ⛔ STOP app if DB not connected
   }
 };
+
 
 module.exports = connectDB;
