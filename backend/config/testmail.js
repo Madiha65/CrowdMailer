@@ -1,4 +1,4 @@
-// //C:\CrowdMailer\backend\config\testmail.js
+
 // require("dotenv").config();
 // const nodemailer = require("nodemailer");
 
@@ -27,7 +27,7 @@
 //   }
 // })();
 
-
+// //C:\CrowdMailer\backend\config\testmail.js
 require("dotenv").config();
 const nodemailer = require("nodemailer");
 

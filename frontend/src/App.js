@@ -16,6 +16,8 @@ import CreateCampaign from './components/campaigns/CreateCampaign';
 import CampaignReport from './components/campaigns/CampaignReport';
 import SubscriberList from './components/subscribers/SubscriberList';
 import AddSubscriber from './components/subscribers/AddSubscriber';
+import ProtectedRoute from './routes/ProtectedRoute';
+import AdminRoute from './routes/AdminRoute';
 
 import LandingPage from './pages/LandingPage';
 
@@ -63,26 +65,69 @@ function AppRoutes() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <Routes>
-      {/* Public Routes */}
+//     <Routes>
+//       {/* Public Routes */}
     
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
-      <Route path="/register" element={!user ? <Register /> : <Navigate to="/login" />} />
-  <Route path="/" element={<LandingPage />} />
-      {/* Protected Routes */}
-      <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
-      <Route path="/campaigns" element={user ? <CampaignList /> : <Navigate to="/login" />} />
-      <Route path="/campaigns/create" element={user ? <CreateCampaign /> : <Navigate to="/login" />} />
-      <Route path="/campaigns/:id" element={user ? <CampaignReport /> : <Navigate to="/login" />} />
-      <Route path="/subscribers" element={user ? <SubscriberList /> : <Navigate to="/login" />} />
-      <Route path="/subscribers/add" element={user ? <AddSubscriber /> : <Navigate to="/login" />} />
-      <Route path="/bank-details" element={<BankDetails/>} />
+//       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+//       <Route path="/register" element={!user ? <Register /> : <Navigate to="/login" />} />
+//   <Route path="/" element={<LandingPage />} />
+//       {/* Protected Routes */}
+//       <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+//       <Route path="/campaigns" element={user ? <CampaignList /> : <Navigate to="/login" />} />
+//       <Route path="/campaigns/create" element={user ? <CreateCampaign /> : <Navigate to="/login" />} />
+//       <Route path="/campaigns/:id" element={user ? <CampaignReport /> : <Navigate to="/login" />} />
+//       <Route path="/subscribers" element={user ? <SubscriberList /> : <Navigate to="/login" />} />
+//       <Route path="/subscribers/add" element={user ? <AddSubscriber /> : <Navigate to="/login" />} />
+//       <Route path="/bank-details" element={<BankDetails/>} />
 
-<Route path="/pricing" element={<PricingPage/>} />
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  );
+// <Route path="/pricing" element={<PricingPage/>} />
+//       {/* Fallback */}
+//       <Route path="*" element={<Navigate to="/" />} />
+//     </Routes>
+  
+<Routes>
+  {/* Public */}
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/register" element={<Register />} />
+  <Route path="/pricing" element={<PricingPage />} />
+
+  {/* User + Admin */}
+  <Route path="/dashboard" element={
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  }/>
+
+  <Route path="/campaigns" element={
+    <ProtectedRoute>
+      <CampaignList />
+    </ProtectedRoute>
+  }/>
+
+  <Route path="/campaigns/create" element={
+    <ProtectedRoute>
+      <CreateCampaign />
+    </ProtectedRoute>
+  }/>
+
+  <Route path="/subscribers" element={
+    <ProtectedRoute>
+      <SubscriberList />
+    </ProtectedRoute>
+  }/>
+
+  {/* Admin Only */}
+  <Route path="/admin" element={
+    <AdminRoute>
+      <Dashboard />
+    </AdminRoute>
+  }/>
+
+  <Route path="*" element={<Navigate to="/" />} />
+</Routes>
+
+);
 }
 
 

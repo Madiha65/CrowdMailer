@@ -17,7 +17,8 @@ const emailRoutes = require('./routes/emailRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const statsRoutes = require("./routes/statsRoutes");
-
+const adminRoutes = require('./routes/adminRoutes');
+const userRoutes = require('./routes/userRoutes');
 const app = express();
 
 app.use(cors({
@@ -37,6 +38,10 @@ app.use("/api/subscribers", subscriberRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api", emailRoutes);
 app.use("/api/uploads", uploadRoutes);
+
+
+app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

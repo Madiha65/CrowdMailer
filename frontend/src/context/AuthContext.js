@@ -11,8 +11,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    if (token) {
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        setUser({ token });
+      }
+    } else if (token) {
       setUser({ token });
     }
     setLoading(false);
@@ -21,8 +28,10 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (email, password) => {
     try {
       const data = await login(email, password);
+      // persist token and full user object (backend returns { _id, name, email, role, token })
       localStorage.setItem('token', data.token);
-      setUser({ token: data.token, ...data.user });
+      localStorage.setItem('user', JSON.stringify(data));
+      setUser(data);
       return data;
     } catch (error) {
       throw error;
@@ -37,6 +46,7 @@ const handleRegister = async (userData) => {
  const handleLogout = () => {
     logout();
     localStorage.removeItem('token');
+   localStorage.removeItem('user');
     setUser(null);
 
     toast.success('Logged out successfully 👋');

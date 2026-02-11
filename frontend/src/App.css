@@ -941,11 +941,11 @@ footer {
   }
 
   .sidebar-container.open {
-    width: 30%;
+    width: 50%;
   }
 
   .sidebar-container.closed {
-    width: 60px;
+    width: 50px;
   }
 
   .sidebar-header {
@@ -953,9 +953,9 @@ footer {
     padding: 15px;
   }
 
-  .sidebar-container.closed {
+  /* .sidebar-container.closed {
     width: 60px;
-  }
+  } */
 
   .sidebar-content {
     height: 100%;

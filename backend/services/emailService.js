@@ -31,35 +31,11 @@
 // module.exports = new EmailService();
 
 
-// backend/services/emailService.js
-const sgMail = require('@sendgrid/mail');
+// Simple wrapper delegating to central mailer in config
+const mailer = require('../config/mailer');
 
-// Set the API key from the environment variable provided by the Render add-on
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-class EmailService {
-  async sendEmail(to, subject, html, attachments = []) {
-    const msg = {
-      to: to, // Recipient's email address
-      from: process.env.FROM_EMAIL, // Must be a verified sender in your SendGrid account
-      subject: subject,
-      html: html,
-      attachments: attachments,
-    };
-
-    try {
-      await sgMail.send(msg);
-      console.log('✅ Email sent successfully via SendGrid');
-      return { success: true, message: 'Email sent successfully' };
-    } catch (error) {
-      console.error('❌ Error sending email with SendGrid:', error);
-      // Log detailed error information from SendGrid if available
-      if (error.response) {
-        console.error(error.response.body);
-      }
-      throw error;
-    }
+module.exports = {
+  sendEmail: async (to, subject, html, attachments = []) => {
+    return mailer.sendEmail(to, subject, html, attachments);
   }
-}
-
-module.exports = new EmailService();
+};

@@ -1,10 +1,9 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config({ path: __dirname + "/../.env" });
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
+  secure: process.env.SMTP_SECURE === 'true' || false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -24,29 +23,53 @@ const transporter = nodemailer.createTransport({
 // backend/config/mailer.js
 const sgMail = require('@sendgrid/mail');
 
-// Set the API key from the environment variable provided by the Render add-on
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+let useSendGrid = false;
+if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_API_KEY.startsWith('SG.')) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  useSendGrid = true;
+} else {
+  console.info('ℹ️  SENDGRID_API_KEY not found or invalid. Falling back to SMTP (Nodemailer).');
+}
 
 const sendEmail = async (to, subject, html, attachments = []) => {
-  const msg = {
-    to: to, // Recipient
-    from: process.env.FROM_EMAIL, // Must be a verified sender in your SendGrid account
-    subject: subject,
-    html: html,
-    attachments: attachments,
-  };
+  if (useSendGrid) {
+    const msg = {
+      to: to,
+      from: process.env.FROM_EMAIL,
+      subject: subject,
+      html: html,
+      attachments: attachments,
+    };
 
-  try {
-    await sgMail.send(msg);
-    console.log("✅ Email sent successfully via SendGrid");
-  } catch (error) {
-    console.error("❌ Error sending email with SendGrid:", error);
-    // Log detailed error information from SendGrid if available
-    if (error.response) {
-      console.error(error.response.body);
+    try {
+      await sgMail.send(msg);
+      console.log('✅ Email sent successfully via SendGrid');
+    } catch (error) {
+      console.error('❌ Error sending email with SendGrid:', error);
+      if (error.response) {
+        console.error(error.response.body);
+      }
+      throw error;
+    }
+  } else {
+    // Use Nodemailer transporter as fallback
+    const mailOptions = {
+      from: process.env.FROM_EMAIL || process.env.SMTP_USER,
+      to,
+      subject,
+      html,
+      attachments,
+    };
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully via SMTP:', info && info.messageId);
+      return info;
+    } catch (error) {
+      console.error('❌ Error sending email via SMTP:', error);
+      throw error;
     }
   }
 };
 
-// We export a function that sends an email, not a transporter object
 module.exports = { sendEmail };
