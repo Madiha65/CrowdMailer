@@ -13,9 +13,9 @@ import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import CampaignList from './components/campaigns/CampaignList';
 import CreateCampaign from './components/campaigns/CreateCampaign';
-import CampaignReport from './components/campaigns/CampaignReport';
+// import CampaignReport from './components/campaigns/CampaignReport';
 import SubscriberList from './components/subscribers/SubscriberList';
-import AddSubscriber from './components/subscribers/AddSubscriber';
+// import AddSubscriber from './components/subscribers/AddSubscriber';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
 
@@ -23,7 +23,7 @@ import LandingPage from './pages/LandingPage';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import BankDetails from './pages/BankDetails';
+// import BankDetails from './pages/BankDetails';
 import PricingPage from './pages/PricingPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -60,7 +60,7 @@ function LayoutWrapper({ children }) {
 
 
 function AppRoutes() {
-  const { user, loading } = useAuth();
+  const {loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
 
