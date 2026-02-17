@@ -29,16 +29,17 @@ app.use(cors({
   credentials: true
 }));
 
+
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/campaigns", campaignRoutes);
+// app.js
+app.use("/api/campaigns", campaignRoutes);   // ← add s
 app.use("/api/subscribers", subscriberRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api", emailRoutes);
 app.use("/api/uploads", uploadRoutes);
-
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);

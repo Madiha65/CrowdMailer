@@ -14,7 +14,9 @@ const uploadFiles = upload.fields([
 ]);
 
 
+// router.post('/', auth, campaignController.createCampaign);
 router.post('/', auth, campaignController.createCampaign);
+
 
 router.get('/', auth, campaignController.getCampaigns);
 

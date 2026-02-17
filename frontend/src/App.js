@@ -111,6 +111,9 @@ function AppRoutes() {
     </ProtectedRoute>
   }/>
 
+   {/* <Route path="/" element={<CampaignList />} /> 
+        <Route path="/create" element={<CreateCampaign />} /> */}
+
   <Route path="/subscribers" element={
     <ProtectedRoute>
       <SubscriberList />

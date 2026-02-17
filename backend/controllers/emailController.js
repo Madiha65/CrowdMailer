@@ -28,48 +28,6 @@ exports.getStats = async (req, res) => {
   }
 };
 
-exports.sendMultipleEmails = async (req, res) => {
-  try {
-    const { from, recipients, subject, html } = req.body;
-
-    if (!from || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
-      return res.status(400).json({ error: "From, recipients, subject, and HTML are required." });
-    }
-
-    let successCount = 0;
-    let failCount = 0;
-
-    for (const to of recipients) {
-      try {
-        await transporter.sendMail({
-          from: `"Mailer" <${from}>`,
-          to,
-          subject,
-          html,
-        });
-
-        successCount++;
-        console.log(`✅ Email sent from ${from} → ${to}`);
-      } catch (err) {
-        failCount++;
-        console.error(`❌ Failed to send to ${to}: ${err.message}`);
-      }
-
-      await new Promise((res) => setTimeout(res, 1000));
-    }
-
-    res.json({
-      message: `Sent ${successCount}/${recipients.length} emails successfully.`,
-      successCount,
-      failCount,
-    });
-  } catch (error) {
-    console.error("Send Multiple Emails Error:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-
 exports.sendBulkEmail = async (req, res) => {
   try {
     const { from, emails, subject, html } = req.body;
@@ -90,7 +48,7 @@ exports.sendBulkEmail = async (req, res) => {
 
     for (const email of emails) {
       try {
-        await transporter.sendMail({
+        await transporter.sendEmail({
           from: `"Bulk Mailer" <${from}>`,
           to: email,
           subject,
@@ -116,11 +74,11 @@ exports.sendBulkEmail = async (req, res) => {
   }
 };
 
-
 exports.sendCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
-    if (!campaign) return res.status(404).json({ message: "Campaign not found" });
+    if (!campaign)
+      return res.status(404).json({ message: "Campaign not found" });
 
     const imageRegex = /<img[^>]+src="([^">]+)"/g;
     const attachments = [];
@@ -130,10 +88,20 @@ exports.sendCampaign = async (req, res) => {
 
     while ((match = imageRegex.exec(campaign.content)) !== null) {
       const imgUrl = match[1];
+
       if (imgUrl.includes("uploads/")) {
-        const localPath = path.join(__dirname, "..", imgUrl.replace("http://localhost:5000/", ""));
+        const localPath = path.join(
+          __dirname,
+          "..",
+          imgUrl.replace("http://localhost:5000/", "")
+        );
+
         const cid = `img${cidIndex}@campaign`;
-        updatedHtml = updatedHtml.replace(new RegExp(imgUrl, "g"), `cid:${cid}`);
+        updatedHtml = updatedHtml.replace(
+          new RegExp(imgUrl, "g"),
+          `cid:${cid}`
+        );
+
         if (fs.existsSync(localPath)) {
           attachments.push({
             filename: path.basename(localPath),
@@ -141,21 +109,14 @@ exports.sendCampaign = async (req, res) => {
             cid,
           });
         }
+
         cidIndex++;
       }
     }
 
-    const { recipients } = req.body;
-    let recipientEmails = [];
+    let recipientEmails = campaign.recipients;
 
-    if (recipients && recipients.length > 0) {
-      recipientEmails = recipients;
-    } else {
-      const subscribers = await Subscriber.find({ status: "active" });
-      recipientEmails = subscribers.map((s) => s.email);
-    }
-
-    if (recipientEmails.length === 0) {
+    if (!recipientEmails || recipientEmails.length === 0) {
       return res.status(400).json({ message: "No recipients found." });
     }
 
@@ -164,28 +125,27 @@ exports.sendCampaign = async (req, res) => {
 
     for (const email of recipientEmails) {
       try {
-        await transporter.sendMail({
+        await transporter.sendEmail({
           from: `"${campaign.name}" <${process.env.FROM_EMAIL}>`,
           to: email,
           subject: campaign.subject,
           html: updatedHtml,
           attachments,
         });
+
         successCount++;
+        console.log("✅ Sent:", email);
       } catch (err) {
+        console.log("❌ Failed:", email);
+        console.log("Error:", err.message);
         failCount++;
       }
 
-      await new Promise((res) => setTimeout(res, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
     campaign.status = "sent";
     await campaign.save();
-
-    console.log(`📨 Campaign summary:`);
-    console.log(`   ✅ Successful: ${successCount}`);
-    console.log(`   ❌ Failed: ${failCount}`);
-    console.log(`   👥 Total: ${recipientEmails.length}`);
 
     res.json({
       message: `Campaign sent to ${successCount}/${recipientEmails.length}`,
@@ -197,6 +157,90 @@ exports.sendCampaign = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// exports.sendCampaign = async (req, res) => {
+//   try {
+//     const campaign = await Campaign.findById(req.params.id);
+//     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
+
+//     const imageRegex = /<img[^>]+src="([^">]+)"/g;
+//     const attachments = [];
+//     let updatedHtml = campaign.content;
+//     let match;
+//     let cidIndex = 1;
+
+//     while ((match = imageRegex.exec(campaign.content)) !== null) {
+//       const imgUrl = match[1];
+//       if (imgUrl.includes("uploads/")) {
+//         const localPath = path.join(__dirname, "..", imgUrl.replace("http://localhost:5000/", ""));
+//         const cid = `img${cidIndex}@campaign`;
+//         updatedHtml = updatedHtml.replace(new RegExp(imgUrl, "g"), `cid:${cid}`);
+//         if (fs.existsSync(localPath)) {
+//           attachments.push({
+//             filename: path.basename(localPath),
+//             path: localPath,
+//             cid,
+//           });
+//         }
+//         cidIndex++;
+//       }
+//     }
+
+//     const { recipients } = req.body;
+//     let recipientEmails = [];
+
+//     if (recipients && recipients.length > 0) {
+//       recipientEmails = recipients;
+//     } else {
+//       const subscribers = await Subscriber.find({ status: "active" });
+//       recipientEmails = subscribers.map((s) => s.email);
+//     }
+
+//     if (recipientEmails.length === 0) {
+//       return res.status(400).json({ message: "No recipients found." });
+//     }
+
+//     let successCount = 0;
+//     let failCount = 0;
+
+//     for (const email of recipientEmails) {
+//       try {
+//         await transporter.sendMail({
+//           from: `"${campaign.name}" <${process.env.FROM_EMAIL}>`,
+//           to: email,
+//           subject: campaign.subject,
+//           html: updatedHtml,
+//           attachments,
+//         });
+//         successCount++;
+//       } catch (err) {
+//         console.log("EMAIL FAILED:", email);
+//         console.log("ERROR DETAILS:", err.message);
+//         failCount++;
+//       }
+
+//       await new Promise((res) => setTimeout(res, 2000));
+//     }
+
+//     campaign.status = "sent";
+//     await campaign.save();
+
+//     console.log(`📨 Campaign summary:`);
+//     console.log(`   ✅ Successful: ${successCount}`);
+//     console.log(`   ❌ Failed: ${failCount}`);
+//     console.log(`   👥 Total: ${recipientEmails.length}`);
+
+//     res.json({
+//       message: `Campaign sent to ${successCount}/${recipientEmails.length}`,
+//       successCount,
+//       failCount,
+//     });
+//   } catch (error) {
+//     console.error("Send Campaign Error:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 exports.sendMultipleEmails = async (req, res) => {
   try {
@@ -224,15 +268,15 @@ exports.sendMultipleEmails = async (req, res) => {
 
     for (const to of recipients) {
       try {
-        await transporter.sendMail({
+        await transporter.sendEmail({
           from: `"${sender.name || from}" <${process.env.FROM_EMAIL}>`,
           to,
           subject,
           html,
         });
-        
+
         await EmailLog.create({
-          campaignId: null, 
+          campaignId: null,
           subscriberId: sender._id,
           status: "sent",
           sentAt: new Date(),
@@ -243,9 +287,9 @@ exports.sendMultipleEmails = async (req, res) => {
       } catch (err) {
         failCount++;
         console.error(`❌ Failed to send to ${to}: ${err.message}`);
-        
+
         await EmailLog.create({
-          campaignId: null, 
+          campaignId: null,
           subscriberId: sender._id,
           status: "failed",
           sentAt: new Date(),

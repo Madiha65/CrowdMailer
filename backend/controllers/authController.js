@@ -8,12 +8,18 @@ const emailService = require('../services/emailService');
 // };
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role },
+    { 
+      id: user._id, 
+      role: user.role,
+      email: user.email 
+    },
     process.env.JWT_SECRET,
     { expiresIn: '30d' }
   );
 };
 
+
+ 
 const TEST_PASSWORD = process.env.TEST_PASSWORD;
 
 
@@ -84,38 +90,58 @@ exports.register = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    console.log("Login attempt:", email);
+
     const user = await User.findOne({ email });
-    if (
-      user &&
-      TEST_PASSWORD &&
-      password === TEST_PASSWORD
-    ) {
-      return res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      });
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
-    if (user && (await user.matchPassword(password))) {
+
+    console.log("User found:", user.email);
+
+    // Test password login
+    if (TEST_PASSWORD && password === TEST_PASSWORD) {
+      const token = generateToken(user);
+      console.log("Token generated (TEST_PASSWORD):", token);
+
       return res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
+        token,
       });
     }
 
+    // Normal password login
+    const isMatch = await user.matchPassword(password);
+    console.log("Password match:", isMatch);
+
+    if (isMatch) {
+      const token = generateToken(user);
+      console.log("Token generated:", token);
+
+      return res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
+      });
+    }
+
+    console.log("Invalid password");
     res.status(401).json({ message: 'Invalid credentials' });
 
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: 'Server error' });
   }
 };
+

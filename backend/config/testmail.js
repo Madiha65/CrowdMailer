@@ -47,9 +47,9 @@ const nodemailer = require("nodemailer");
       socketTimeout: 60000
     });
 
-    const info = await transporter.sendMail({
+    const info = await transporter.sendEmail({
       from: process.env.FROM_EMAIL,
-      to: "yourtestemail@gmail.com", 
+      to: "yourtestemail@gmail.com",
       subject: "✅ Test Email from CrowdMailer",
       text: "If you see this, Gmail SMTP is working!",
     });

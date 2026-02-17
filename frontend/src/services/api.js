@@ -26,35 +26,40 @@
 //     }
 //     return Promise.reject(error);
 //   }
-// );
+// ); 
 
 // export default api;
 
-//frontend\src\services\api.js
+// frontend/src/services/api.js
 import axios from 'axios';
 
-const API_URL =
-  process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
-  withCredentials: true
-});
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  timeout: 30000,
+  // withCredentials: true,    ← remove or comment out
 });
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 api.interceptors.response.use(
-  response => response,
-  error => {
-    if (error.response && error.response.status === 401) {
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
