@@ -10,13 +10,13 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handlePlanClick = (planName) => {
-    if (!user) {
-      navigate(`/login?redirect=/bank-details&plan=${planName}`);
-    } else {
-      navigate(`/bank-details?plan=${planName}`);
-    }
-  };
+  // const handlePlanClick = (planName) => {
+  //   if (!user) {
+  //     navigate(`/login?redirect=/bank-details&plan=${planName}`);
+  //   } else {
+  //     navigate(`/bank-details?plan=${planName}`);
+  //   }
+  // };
 
   return (
     <>
