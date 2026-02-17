@@ -72,16 +72,24 @@ exports.sendCampaign = async (req, res) => {
     const campaign = await Campaign.findById(req.params.id);
     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
 
-    const subscribers = await Subscriber.find({ status: "active" });
-    const recipientEmails = subscribers.map(s => s.email);
+    let recipientEmails = campaign.recipients;
+
+    // Fallback to all active subscribers if no specific recipients
+    if (!recipientEmails || recipientEmails.length === 0) {
+      const subscribers = await Subscriber.find({ status: "active" });
+      recipientEmails = subscribers.map(s => s.email);
+    }
 
     if (recipientEmails.length === 0) {
-      return res.status(400).json({ message: "No active subscribers found." });
+      return res.status(400).json({ message: "No recipients or active subscribers found." });
     }
 
     let successCount = 0;
     let failCount = 0;
 
+    // Optimization: meaningful parallelism or faster loop? 
+    // For now, removing the delay is the biggest win. 
+    // We keep sequential await to avoid rate limits if using free tier, but remove explicit sleep.
     for (const email of recipientEmails) {
       try {
         await mailer.sendEmail(
@@ -97,8 +105,7 @@ exports.sendCampaign = async (req, res) => {
         console.log(err.message);
         failCount++;
       }
-
-      await new Promise(res => setTimeout(res, 1500));
+      // Removed 1.5s delay to prevent timeouts
     }
 
     campaign.status = "sent";

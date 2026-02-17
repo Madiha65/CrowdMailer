@@ -1,3 +1,4 @@
+//frontend\src\components\campaigns\CampaignList.js
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Table, Button, Badge, Container } from 'react-bootstrap';
@@ -25,40 +26,40 @@ const CampaignList = () => {
     fetchCampaigns();
   }, []);
 
-const handleSend = async (id) => {
-  try {
-    const campaign = campaigns.find(c => c._id === id);
-    const payload = {
-    from: localStorage.getItem("userEmail"), 
-      emails: [
-        "user1@gmail.com",
-        "user2@gmail.com",
-        "user3@gmail.com"
-      ],
-      subject: campaign?.subject || "Default Subject",
-      html: campaign?.content || "<p>No content</p>"
-    };
+  const handleSend = async (id) => {
+    try {
+      const campaign = campaigns.find(c => c._id === id);
+      const payload = {
+        from: localStorage.getItem("userEmail"),
+        emails: [
+          "user1@gmail.com",
+          "user2@gmail.com",
+          "user3@gmail.com"
+        ],
+        subject: campaign?.subject || "Default Subject",
+        html: campaign?.content || "<p>No content</p>"
+      };
 
-    console.log("🚀 Sending campaign:", payload);
+      console.log("🚀 Sending campaign:", payload);
 
-  await api.post(
-  `/campaigns/${id}/send`,
-  { recipients: campaign.recipients }, 
-  {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  }
-);
+      await api.post(
+        `/campaigns/${id}/send`,
+        { recipients: campaign.recipients },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
 
 
-    alert("✅ Campaign is being sent!");
+      alert("✅ Campaign is being sent!");
 
-    const response = await api.get("/campaigns");
-    setCampaigns(response.data);
-  } catch (error) {
-    console.error("❌ Error sending campaign:", error.response?.data || error);
-    alert("Failed to send campaign");
-  }
-};
+      const response = await api.get("/campaigns");
+      setCampaigns(response.data);
+    } catch (error) {
+      console.error("❌ Error sending campaign:", error.response?.data || error);
+      alert("Failed to send campaign");
+    }
+  };
 
 
   const getStatusBadge = (status) => {
@@ -73,18 +74,18 @@ const handleSend = async (id) => {
 
   if (loading) return <div>Loading...</div>;
   const handleDelete = async (id) => {
-    console.log("🗑️ Attempting to delete campaign ID:", id);  
+    console.log("🗑️ Attempting to delete campaign ID:", id);
 
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
 
     try {
       const response = await api.delete(`/campaigns/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
-      console.log("✅ Delete response:", response.data); 
+      console.log("✅ Delete response:", response.data);
       alert("Campaign deleted successfully!");
 
       setCampaigns((prev) => prev.filter((c) => c._id !== id));
