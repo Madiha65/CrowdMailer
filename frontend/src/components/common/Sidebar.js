@@ -42,13 +42,22 @@ const Sidebar = () => {
           </Nav.Link>
         </Nav.Item>
 
-        {/* CAMPAIGNS - All users */}
-        <Nav.Item>
-          <Nav.Link as={Link} to="/campaigns" className="d-flex align-items-center mb-3">
-            <MdCampaign size={22} className="me-2 text-success" />
-            {isOpen && <span>Campaigns</span>}
-          </Nav.Link>
-        </Nav.Item>
+        {/* CAMPAIGNS - Conditional based on Role */}
+        {user?.role === "admin" ? (
+          <Nav.Item>
+            <Nav.Link as={Link} to="/campaigns" className="d-flex align-items-center mb-3">
+              <MdCampaign size={22} className="me-2 text-success" />
+              {isOpen && <span>Campaigns</span>}
+            </Nav.Link>
+          </Nav.Item>
+        ) : (
+          <Nav.Item>
+            <Nav.Link as={Link} to="/campaigns/create" className="d-flex align-items-center mb-3">
+              <MdCampaign size={22} className="me-2 text-success" />
+              {isOpen && <span>Create Campaign</span>}
+            </Nav.Link>
+          </Nav.Item>
+        )}
 
         {/* SUBSCRIBERS - All users */}
         <Nav.Item>

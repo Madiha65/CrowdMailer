@@ -61,6 +61,7 @@ exports.createCampaign = async (req, res) => {
       subscriptionFee: req.body.subscriptionFee,
       status: "draft",
       createdAt: new Date(),
+      createdBy: req.user.id // Save the user ID
     });
 
     await campaign.save(); res.status(201).json(campaign);
@@ -71,6 +72,11 @@ exports.sendCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
+
+    // Ensure user owns the campaign or is admin
+    if (campaign.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Access denied. You do not own this campaign." });
+    }
 
     let recipientEmails = campaign.recipients;
 
@@ -125,7 +131,17 @@ exports.sendCampaign = async (req, res) => {
 
 exports.getCampaigns = async (req, res) => {
   try {
-    const campaigns = await Campaign.find().sort({ createdAt: -1 });
+    let campaigns;
+
+    // ROLE Check
+    if (req.user.role === 'admin') {
+      // Admin sees ALL campaigns
+      campaigns = await Campaign.find().sort({ createdAt: -1 });
+    } else {
+      // Regular user sees ONLY their own campaigns
+      campaigns = await Campaign.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
+    }
+
     res.json(campaigns);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -138,6 +154,12 @@ exports.getCampaignById = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
     }
+
+    // ROLE Check for Single Campaign
+    if (req.user.role !== 'admin' && campaign.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
     res.json(campaign);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -155,6 +177,11 @@ exports.deleteCampaign = async (req, res) => {
     if (!campaign) {
       console.log("❌ Campaign not found for ID:", req.params.id);
       return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    // Role Check
+    if (campaign.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Access denied. You do not own this campaign." });
     }
 
     await campaign.deleteOne();
