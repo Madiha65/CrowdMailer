@@ -33,11 +33,16 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
+<<<<<<< HEAD
 // In production (Vercel), frontend and backend are served from the SAME
 // domain, and vercel.json rewrites "/api/*" to the backend. So the default
 // should be a relative path, not a different/unrelated host.
 // For local development, set REACT_APP_API_URL=http://localhost:5000/api in a .env file.
 const API_URL = process.env.REACT_APP_API_URL || '/api';
+=======
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://crowdmailer.onrender.com/api';
+>>>>>>> f1980731a8528bb7132ddd14dd6056d6b284a58a
 
 const api = axios.create({
   baseURL: API_URL,

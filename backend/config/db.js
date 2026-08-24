@@ -19,6 +19,7 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
+<<<<<<< HEAD
   // Avoid reconnecting on every serverless invocation.
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
@@ -35,6 +36,14 @@ const connectDB = async () => {
     // can take down the API entirely. We throw instead so the request
     // fails gracefully and the next request can retry the connection.
     throw error;
+=======
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1); // ⛔ STOP app if DB not connected
+>>>>>>> f1980731a8528bb7132ddd14dd6056d6b284a58a
   }
 };
 

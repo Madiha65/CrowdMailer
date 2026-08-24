@@ -8,9 +8,13 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
+<<<<<<< HEAD
 connectDB().catch((err) => {
   console.error("Startup DB connection error:", err.message);
 });
+=======
+connectDB();
+>>>>>>> f1980731a8528bb7132ddd14dd6056d6b284a58a
 
 const authRoutes = require('./routes/authRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CrowdMailer
 
 A MERN stack (MongoDB, Express, React, Node.js) application for sending and managing email campaigns.
@@ -12,3 +13,9 @@ A MERN stack (MongoDB, Express, React, Node.js) application for sending and mana
 
 ## Deployment (Vercel)
 This project is deployed as a single Vercel project containing both the frontend (static build) and backend (serverless function). `vercel.json` routes `/api/*` requests to the backend and everything else to the frontend. Make sure required environment variables (e.g. `MONGODB_URI`) are set in the Vercel project settings.
+=======
+<<<<<< HEAD
+=======
+# CrowdMailer
+>>>>>>> 48bc544 (Initial commit)
+>>>>>>> f1980731a8528bb7132ddd14dd6056d6b284a58a
