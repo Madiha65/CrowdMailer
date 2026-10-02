@@ -4,6 +4,8 @@ const Campaign = require("../models/Campaign");
 const Subscriber = require("../models/Subscriber");
 const EmailLog = require("../models/EmailLog");
 const transporter = require("../config/mailer");
+const User = require("../models/User");
+const { PLANS, getEffectivePlan } = require("../config/plans");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
@@ -80,6 +82,33 @@ exports.sendCampaign = async (req, res) => {
     if (!campaign)
       return res.status(404).json({ message: "Campaign not found" });
 
+    // 1) Ownership: only the creator (or admin) can send
+    const isAdmin = req.user.role === "admin";
+    if (!isAdmin && campaign.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Access denied. You do not own this campaign." });
+    }
+
+    if (campaign.status === "sent") {
+      return res.status(400).json({ message: "This campaign was already sent." });
+    }
+
+    // 2) Plan limit: free = 5 campaigns, then a paid plan is required
+    const owner = await User.findById(campaign.createdBy);
+    const plan = getEffectivePlan(owner);
+    const limit = PLANS[plan].campaignLimit;
+    if (owner.role !== "admin" && (owner.campaignsSent || 0) >= limit) {
+      return res.status(403).json({
+        code: "PLAN_LIMIT",
+        message:
+          plan === "free"
+            ? `Free plan limit reached (${limit} campaigns). Please subscribe to a paid plan to send more.`
+            : `${PLANS[plan].name} limit reached (${limit} campaigns). Please upgrade your plan.`,
+        plan,
+        limit,
+        used: owner.campaignsSent || 0,
+      });
+    }
+
     const imageRegex = /<img[^>]+src="([^">]+)"/g;
     const attachments = [];
     let updatedHtml = campaign.content;
@@ -114,11 +143,16 @@ exports.sendCampaign = async (req, res) => {
       }
     }
 
-    let recipientEmails = campaign.recipients;
-
+    const recipientEmails = campaign.recipients;
     if (!recipientEmails || recipientEmails.length === 0) {
       return res.status(400).json({ message: "No recipients found." });
     }
+
+    // 3) Sender: show the user's name, reply goes to the user's own email.
+    // (SMTP/SendGrid only allow sending from your verified address, so the
+    //  real "from" stays FROM_EMAIL and the user's email goes in Reply-To.)
+    const senderEmail = campaign.sender || owner.email;
+    const fromAddress = process.env.FROM_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER;
 
     let successCount = 0;
     let failCount = 0;
@@ -126,7 +160,8 @@ exports.sendCampaign = async (req, res) => {
     for (const email of recipientEmails) {
       try {
         await transporter.sendEmail({
-          from: `"${campaign.name}" <${process.env.FROM_EMAIL}>`,
+          from: `"${owner.name} (${senderEmail})" <${fromAddress}>`,
+          replyTo: senderEmail,
           to: email,
           subject: campaign.subject,
           html: updatedHtml,
@@ -145,7 +180,14 @@ exports.sendCampaign = async (req, res) => {
     }
 
     campaign.status = "sent";
+    campaign.sentAt = new Date();
+    campaign.sentCount = successCount;
     await campaign.save();
+
+    // count it against the owner's plan (only if at least one mail went out)
+    if (successCount > 0) {
+      await User.updateOne({ _id: owner._id }, { $inc: { campaignsSent: 1 } });
+    }
 
     res.json({
       message: `Campaign sent to ${successCount}/${recipientEmails.length}`,

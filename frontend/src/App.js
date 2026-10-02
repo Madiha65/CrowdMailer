@@ -15,7 +15,9 @@ import CampaignList from './components/campaigns/CampaignList';
 import CreateCampaign from './components/campaigns/CreateCampaign';
 // import CampaignReport from './components/campaigns/CampaignReport';
 import SubscriberList from './components/subscribers/SubscriberList';
-// import AddSubscriber from './components/subscribers/AddSubscriber';
+import AddSubscriber from './components/subscribers/AddSubscriber';
+import CampaignReport from './components/campaigns/CampaignReport';
+import AdminUsers from './components/admin/AdminUsers';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
 
@@ -123,7 +125,25 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
+      <Route path="/subscribers/add" element={
+        <ProtectedRoute>
+          <AddSubscriber />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/campaigns/:id" element={
+        <ProtectedRoute>
+          <CampaignReport />
+        </ProtectedRoute>
+      } />
+
       {/* Admin Only */}
+      <Route path="/admin/users" element={
+        <AdminRoute>
+          <AdminUsers />
+        </AdminRoute>
+      } />
+
       <Route path="/admin" element={
         <AdminRoute>
           <Dashboard />

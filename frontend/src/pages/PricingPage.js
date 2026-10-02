@@ -20,7 +20,7 @@ const PricingPage = () => {
           <h3>Free Plan</h3>
           <p className="price">₹0 / month</p>
           <ul>
-            <li>✔ Send up to 50 emails</li>
+            <li>✔ Send up to 5 campaigns</li>
             <li>✔ Basic templates</li>
             <li>✔ Subscriber management</li>
             <li>✔ Email support</li>

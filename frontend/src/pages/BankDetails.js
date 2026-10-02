@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../App.css";
+import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const BankDetails = () => {
+  const { user } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,7 +18,7 @@ const BankDetails = () => {
       name: "Free Plan",
       price: "₹0",
       features: [
-        "Send up to 50 emails",
+        "Send up to 5 campaigns",
         "Basic templates",
         "Subscriber management",
         "Email support",
@@ -46,17 +50,29 @@ const BankDetails = () => {
 
   const [paymentMethod, setPaymentMethod] = useState("card");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically integrate with a payment gateway
-    // alert(`Processing payment for ${selectedPlan.name} via ${paymentMethod}`);
-    navigate("/payment-success", {
-      state: {
-        plan: selectedPlan.name,
-        amount: selectedPlan.price,
-        paymentMethod: paymentMethod === 'card' ? 'Credit Card' : 'PayPal'
-      }
-    });
+    if (!user) {
+      navigate(`/login?redirect=/bank-details&plan=${plan}`);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      // TODO: replace with a real gateway (Razorpay/Stripe) and activate the
+      // plan from the server only after the payment is verified.
+      await api.post("/subscription/activate", { plan });
+      navigate("/payment-success", {
+        state: {
+          plan: selectedPlan.name,
+          amount: selectedPlan.price,
+          paymentMethod: paymentMethod === "card" ? "Credit Card" : "PayPal",
+        },
+      });
+    } catch (err) {
+      alert(err.response?.data?.message || "Could not activate plan");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -84,17 +100,17 @@ const BankDetails = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name</label>
-                  <input type="text" defaultValue="Jane" required />
+                  <input type="text" defaultValue={user?.name?.split(" ")[0] || ""} required />
                 </div>
                 <div className="form-group">
                   <label>Last Name</label>
-                  <input type="text" defaultValue="Doe" required />
+                  <input type="text" defaultValue={user?.name?.split(" ").slice(1).join(" ") || ""} required />
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Email Address</label>
-                <input type="email" defaultValue="jane.doe@example.com" required />
+                <input type="email" defaultValue={user?.email || ""} required />
               </div>
 
               <div className="form-group">
@@ -183,8 +199,8 @@ const BankDetails = () => {
               <span className="total-amount">{selectedPlan.price}.00</span>
             </div>
 
-            <button type="submit" form="billing-form" className="confirm-btn">
-              {paymentMethod === 'paypal' ? 'Proceed to PayPal' : `Confirm & Pay ${selectedPlan.price}`}
+            <button type="submit" form="billing-form" className="confirm-btn" disabled={submitting}>
+              {submitting ? 'Activating...' : paymentMethod === 'paypal' ? 'Proceed to PayPal' : `Confirm & Pay ${selectedPlan.price}`}
             </button>
 
             <p className="security-note">🔒 Payments are secure and encrypted</p>

@@ -22,6 +22,7 @@ const errorHandler = require('./middleware/errorHandler');
 const statsRoutes = require("./routes/statsRoutes");
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const app = express();
 
 app.use(cors({
@@ -46,6 +47,7 @@ app.use("/api/uploads", uploadRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

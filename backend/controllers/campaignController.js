@@ -136,7 +136,9 @@ exports.getCampaigns = async (req, res) => {
     // ROLE Check
     if (req.user.role === 'admin') {
       // Admin sees ALL campaigns
-      campaigns = await Campaign.find().sort({ createdAt: -1 });
+      campaigns = await Campaign.find()
+        .populate('createdBy', 'name email')
+        .sort({ createdAt: -1 });
     } else {
       // Regular user sees ONLY their own campaigns
       campaigns = await Campaign.find({ createdBy: req.user.id }).sort({ createdAt: -1 });

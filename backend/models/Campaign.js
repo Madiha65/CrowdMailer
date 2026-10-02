@@ -19,6 +19,8 @@ const CampaignSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
   sentAt: Date,
+  sentCount: { type: Number, default: 0 },
+  subscriptionFee: { type: Number, default: 0 },
 
 
   attachments: {

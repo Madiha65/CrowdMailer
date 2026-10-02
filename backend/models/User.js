@@ -7,6 +7,9 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['admin', 'user'], default: 'user' },
+  plan: { type: String, enum: ['free', 'starter', 'pro'], default: 'free' },
+  planExpiresAt: { type: Date },
+  campaignsSent: { type: Number, default: 0 }, // lifetime counter (deleting a campaign does NOT reset it)
   createdAt: { type: Date, default: Date.now }
 });
 

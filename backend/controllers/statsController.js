@@ -1,23 +1,20 @@
 const Campaign = require('../models/Campaign');
 const Subscriber = require('../models/Subscriber');
-const EmailLog = require('../models/EmailLog');
 
+// Admin sees totals for everyone, a normal user sees only their own numbers.
 exports.getStats = async (req, res) => {
   try {
-    const totalSubscribers = await Subscriber.countDocuments();
-    const campaignsSent = await Campaign.countDocuments();
-    const emailsSent = await EmailLog.countDocuments();
+    const isAdmin = req.user.role === 'admin';
+    const campaignFilter = isAdmin ? {} : { createdBy: req.user.id };
+    const subscriberFilter = isAdmin ? {} : { owner: req.user.id };
 
-    const openRate = emailsSent
-      ? ((emailsSent / (totalSubscribers || 1)) * 100).toFixed(2)
-      : 0;
+    const totalSubscribers = await Subscriber.countDocuments(subscriberFilter);
+    const sentCampaigns = await Campaign.find({ ...campaignFilter, status: 'sent' }).select('sentCount');
+    const campaignsSent = sentCampaigns.length;
+    const emailsSent = sentCampaigns.reduce((sum, c) => sum + (c.sentCount || 0), 0);
 
-    res.json({
-      totalSubscribers,
-      campaignsSent,
-      emailsSent,
-      openRate,
-    });
+    // Open tracking is not implemented yet, so don't show a fake number
+    res.json({ totalSubscribers, campaignsSent, emailsSent, openRate: 0 });
   } catch (error) {
     console.error('Error in getStats:', error);
     res.status(500).json({ message: 'Server Error', error: error.message });

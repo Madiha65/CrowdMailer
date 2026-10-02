@@ -7,13 +7,14 @@ exports.addSubscriber = async (req, res) => {
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
-    const existing = await Subscriber.findOne({ email });
+    const existing = await Subscriber.findOne({ email, owner: req.user.id });
     if (existing) {
       return res.status(400).json({ message: "Already subscribed!" });
     }
     const subscriber = await Subscriber.create({
       name: name || "Anonymous",
       email,
+      owner: req.user.id,
       status: "active",
     });
 
@@ -30,7 +31,10 @@ exports.addSubscriber = async (req, res) => {
 
 exports.getSubscribers = async (req, res) => {
   try {
-    const subscribers = await Subscriber.find().sort({ createdAt: -1 });
+    const filter = req.user.role === 'admin' ? {} : { owner: req.user.id };
+    const subscribers = await Subscriber.find(filter)
+      .populate('owner', 'name email')
+      .sort({ createdAt: -1 });
     res.json(subscribers);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -39,7 +43,9 @@ exports.getSubscribers = async (req, res) => {
 
 exports.deleteSubscriber = async (req, res) => {
   try {
-    const subscriber = await Subscriber.findByIdAndDelete(req.params.id);
+    const filter = { _id: req.params.id };
+    if (req.user.role !== 'admin') filter.owner = req.user.id;
+    const subscriber = await Subscriber.findOneAndDelete(filter);
 
     if (!subscriber) {
       return res.status(404).json({ message: 'Subscriber not found or already removed' });
